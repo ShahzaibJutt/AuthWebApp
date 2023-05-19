@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="AuthWebApp:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>AuthWebApp</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="AuthWebApp-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="AuthWebApp:war exploded" />
+    </root>
+  </artifact>
+</component>
