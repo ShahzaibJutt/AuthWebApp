@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: shahzaib
-  Date: 19/5/23
-  Time: 9:57 PM
-  To change this template use File | Settings | File Templates.
---%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,6 +16,7 @@
       padding: 20px;
       border-radius: 5px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
     }
 
     h1 {
@@ -59,30 +53,42 @@
       border-radius: 4px;
       cursor: pointer;
       width: 100%;
+      font-weight: bold;
     }
 
     .form-group input[type="submit"]:hover {
       background-color: #45a049;
     }
-  </style>
-  <script>
-    function validateForm() {
-      var email = document.getElementById("email").value;
 
-      // Email validation
-      var emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-      if (!email.match(emailRegex)) {
-        alert("Please enter a valid email address.");
-        return false;
-      }
-      return true;
+    /* Popup */
+    .popup {
+      position: absolute;
+      bottom: -80px;
+      left: 0;
+      height: 50px;
+      background-color: #4CAF50;
+      color: #fff;
+      text-align: center;
+      line-height: 50px;
+      font-size: 16px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      margin-top: 20px;
+      font-weight: bold;
+      width: 80%;
+      margin-left: 10%;
     }
-  </script>
+
+    .popup.show {
+      opacity: 1;
+    }
+  </style>
 </head>
 <body>
 <div class="container">
   <h1>Login</h1>
-  <form action="loginServlet" method="post" onsubmit="validateForm()">
+  <form action="loginServlet" method="post" onsubmit="return validateForm()">
     <div class="form-group">
       <label for="email">Email:</label>
       <input type="email" id="email" name="email" required>
@@ -95,7 +101,57 @@
       <input type="submit" value="Login">
     </div>
   </form>
+  <div id="message-popup" class="popup"></div>
   <p>Don't have an account? <a href="signup.jsp">Signup here</a></p>
 </div>
+
+
+<script>
+  function validateForm() {
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+
+    // Email validation
+    var emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!email.match(emailRegex)) {
+      showMessage("Please enter a valid email address.");
+      return false;
+    }
+
+    // Send AJAX request to login servlet
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "loginServlet", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+
+        // Check the status in the response
+        if (response.status === "success") {
+          // Password is correct, perform desired action (e.g., redirect to dashboard)
+          showMessage("Login Successful");
+        } else {
+          // Password is incorrect, show error message
+          showMessage("Incorrect password. Please try again.");
+        }
+      }
+    };
+    xhr.send("email=" + encodeURIComponent(email) + "&password=" + encodeURIComponent(password));
+
+    return false;
+  }
+
+  function showMessage(message) {
+    var popup = document.getElementById("message-popup");
+    popup.innerHTML = message;
+    popup.classList.add("show");
+
+    // Automatically hide the message after 3 seconds
+    setTimeout(function () {
+      popup.classList.remove("show");
+    }, 3000);
+  }
+</script>
+
 </body>
 </html>

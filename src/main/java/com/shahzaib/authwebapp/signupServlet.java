@@ -1,5 +1,6 @@
 package com.shahzaib.authwebapp;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +16,13 @@ public class signupServlet extends HttpServlet {
     Connection con;
 
     public void init() {
-        url = "jdbc:postgresql://localhost/web?user=shahzaib&password=4646";
+        Dotenv dotenv = Dotenv.configure().directory("/home/shahzaib/IdeaProjects/AuthWebApp").ignoreIfMalformed().ignoreIfMissing().load();
+
+        String host = dotenv.get("HOST");
+        String database = dotenv.get("DB_NAME");
+        String username = dotenv.get("DB_USERNAME");
+        String password = dotenv.get("DB_PASSWORD");
+        url = "jdbc:postgresql://" + host + "/" + database + "?user=" + username + "&password=" + password;
         try {
             con = DriverManager.getConnection(url);
         } catch (SQLException e) {
